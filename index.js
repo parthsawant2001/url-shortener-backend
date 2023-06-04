@@ -13,7 +13,16 @@ const app = express();
 const port = process.env.PORT;
 const dbUrl = process.env.DATABASE_URL;
 
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      'https://url-shortener-frontend-parthsawant2001.vercel.app/',
+      'https://url-shortener-frontend-mu.vercel.app/',
+      'https://url-shortener-frontend-git-main-parthsawant2001.vercel.app/',
+      'https://url-shortener-frontend-ot3vu9k5k-parthsawant2001.vercel.app/',
+    ],
+  })
+);
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true }));
 
