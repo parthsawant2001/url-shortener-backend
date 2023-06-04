@@ -10,7 +10,7 @@ const mongoose = require('mongoose');
 const { Schema, model } = mongoose;
 require('dotenv').config();
 const app = express();
-const port = process.env.PORT;
+const port = 5000;
 const dbUrl = process.env.DATABASE_URL;
 
 app.use(cors());
