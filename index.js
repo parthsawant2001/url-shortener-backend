@@ -7,7 +7,7 @@ const cors = require('cors');
 const validUrl = require('valid-url');
 const shortid = require('shortid');
 const mongoose = require('mongoose');
-const { Schema, model } = mongoose;
+// const { Schema, model } = mongoose;
 require('dotenv').config();
 const app = express();
 const port = 5000;
@@ -26,12 +26,12 @@ mongoose.connect(dbUrl).then(
   }
 );
 
-const UrlSchema = new Schema({
+const UrlSchema = mongoose.Schema({
   url: { type: String },
   shortCode: { type: String },
 });
 
-const UrlModel = new model('Url', UrlSchema);
+const UrlModel = mongoose.model('Url', UrlSchema);
 
 app.post('/shorten', async (req, res) => {
   const { url } = req.body;
@@ -40,7 +40,7 @@ app.post('/shorten', async (req, res) => {
     console.log('valid URL');
     try {
       const urlDoc = await UrlModel.findOne({ url });
-      console.log(urlDoc);
+      console.log('url does not exist, Creating new: ' + urlDoc);
       if (urlDoc) {
         console.log('already exist', urlDoc.shortCode);
         // return res.redirect(urlDoc.url);
@@ -54,10 +54,14 @@ app.post('/shorten', async (req, res) => {
         url: url,
         shortCode: shortCode,
       });
+      res.send('url shortened');
       // await urlDoc.save();
     } catch (e) {
       res.status(404).json(e);
     }
+  } else {
+    res.send('invalid url');
+    console.log('invalid url');
   }
 });
 
@@ -70,8 +74,9 @@ app.get('/:shortCode', async (req, res) => {
       console.log('shortCode found', { urlDoc });
       // console.log('redirecting...', shortCode);
       return res.redirect(urlDoc.url);
+    } else {
+      res.status(404).json('url not found');
     }
-    res.status(404).json('url not found');
   } catch (e) {
     console.log(e);
     res.status(500).json('internal server error');
